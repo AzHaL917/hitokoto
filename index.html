@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>韓国語 ひとこと添削</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ひとこと添削">
+<meta name="theme-color" content="#12358c">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Noto+Sans+KR:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+/*
+VOICE: 毎日5分の相棒。やさしく、迷わない。大きな文字とはっきりした色。
+IDEA: 先生の赤ペンが入った作文ノート。書く→直される→読む→声に出す→ノートに残る。
+PICTURE: 添削後のハングルを特大で中央に。音声で答え合わせするボタンがその真下。
+COLOUR and TYPE: 白地、濃紺(青)が主、赤ペンの赤がアクセント。BIZ UDPゴシック＋Noto Sans KR。
+LAYOUT: 1カラム。上から 書く → 結果 → ノート。スマホ優先。
+*/
+:root{color-scheme:light dark;
+--bg:light-dark(#ffffff,#0c1222);--ink:light-dark(#111827,#eef2fb);--sub:light-dark(#3b4252,#b9c3d8);
+--blue:light-dark(#12358c,#7fa2ff);--blueBg:light-dark(#e3eaff,#17244a);--red:light-dark(#c8102e,#ff6b7f);
+--redBg:light-dark(#ffe6ea,#3a1520);--line:light-dark(#12358c,#4a64a8);--card:light-dark(#f3f6ff,#131d36)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 "BIZ UDPGothic",system-ui,sans-serif;overflow-x:clip}
+.ko{font-family:"Noto Sans KR","BIZ UDPGothic",sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:20px max(4vw,14px) 60px}
+header{background:var(--blue);color:#fff;padding:18px max(4vw,14px)}
+header h1{margin:0 auto;max-width:760px;font-size:26px;line-height:1.2}
+header p{margin:6px auto 0;max-width:760px;font-size:15px;opacity:.95}
+.card{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:18px;margin-top:18px}
+.step{display:flex;gap:10px;align-items:center;margin:0 0 10px;font-size:20px;font-weight:700}
+.num{flex:none;width:32px;height:32px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-size:17px}
+label{display:block;font-weight:700;margin:12px 0 6px}
+textarea,select,input{width:100%;font:inherit;font-size:18px;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:10px;padding:12px}
+textarea{min-height:110px;resize:vertical}
+textarea.ko{font-size:22px}
+button{font:inherit;font-weight:700;font-size:18px;min-height:48px;padding:10px 18px;border-radius:10px;border:2px solid var(--blue);background:var(--bg);color:var(--blue);cursor:pointer}
+button.main{background:var(--blue);color:#fff;width:100%;font-size:20px;margin-top:14px}
+button:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+button:disabled{opacity:.55;cursor:wait}
+.row{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}.row>button{flex:1 1 140px}
+.hint{color:var(--sub);font-size:15px;margin:6px 0 0}
+.big{font-size:clamp(26px,6.5vw,40px);line-height:1.45;font-weight:700;margin:6px 0 4px;word-break:keep-all;overflow-wrap:anywhere}
+.mean{font-size:19px;margin:4px 0 0}
+.pron{display:none;margin-top:10px;background:var(--blueBg);border-radius:10px;padding:10px 14px;font-size:24px}
+.pron.on{display:block}
+.pron small{display:block;font-family:"BIZ UDPGothic",sans-serif;font-size:15px;color:var(--sub)}
+.praise{background:var(--blueBg);border-left:6px solid var(--blue);padding:10px 14px;border-radius:8px;margin-top:12px}
+.fix{border:2px solid var(--red);background:var(--redBg);border-radius:10px;padding:10px 14px;margin-top:10px}
+.fix .from{text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:2px;font-size:20px}
+.fix .to{color:var(--red);font-weight:900;font-size:20px}
+.fix p{margin:4px 0 0}
+.words{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.words span{border:2px solid var(--line);border-radius:999px;padding:4px 12px;background:var(--bg)}
+.count{display:flex;gap:10px;margin-top:10px}
+.dot{width:48px;height:48px;border-radius:50%;border:3px solid var(--blue);display:grid;place-items:center;font-weight:900;font-size:18px;color:var(--blue);background:var(--bg)}
+.dot.on{background:var(--blue);color:#fff}
+.err{color:var(--red);font-weight:700;margin-top:10px}
+.sub{font-size:16px;color:var(--sub);margin:12px 0 0}
+#result{display:none}#result.on{display:block}
+.note{list-style:none;padding:0;margin:8px 0 0}
+.note li{border-bottom:2px solid var(--blueBg);padding:12px 0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:center}
+.note .k{font-size:21px;font-weight:700}.note .j{font-size:15px;color:var(--sub);grid-column:1}
+.note .d{font-size:13px;color:var(--sub)}
+.note button{grid-row:1/span 3;grid-column:2;min-height:44px;padding:6px 12px;font-size:16px}
+.empty{color:var(--sub)}
+.pad{border:2px solid var(--blue);border-radius:12px;background:var(--bg);padding:8px;margin-bottom:10px}
+.tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.tab{min-height:44px;padding:6px 4px;font-size:17px}
+.tab.on{background:var(--blue);color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;max-height:150px;overflow-y:auto;padding:2px}
+.chip{min-height:46px;padding:4px 10px;font-size:15px;font-weight:700;border-radius:10px;border:2px solid var(--line);background:var(--card);color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.2}
+.chip b{font-family:"Noto Sans KR",sans-serif;font-size:19px;color:var(--blue)}
+.chip:active{background:var(--blue);color:#fff}.chip:active b{color:#fff}
+.exline{margin:8px 2px 0;font-size:15px;color:var(--sub);min-height:1.5em}
+.exline .ko{font-size:18px;font-weight:700;color:var(--ink)}
+.opts{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:center;margin-top:10px}
+.opts label{margin:0}
+.more{margin-top:10px}.more summary{cursor:pointer;color:var(--blue);font-weight:700;min-height:44px;display:flex;align-items:center}
+.kanpe{margin-top:16px;border:2px solid var(--blue);border-radius:12px;background:var(--bg);padding:0 14px}
+.kanpe summary{cursor:pointer;font-weight:700;font-size:19px;color:var(--blue);min-height:48px;display:flex;align-items:center}
+.kanpe[open] summary{border-bottom:2px solid var(--blueBg);margin-bottom:8px}
+.kanpe h3{margin:16px 0 6px;font-size:18px;background:var(--blue);color:#fff;padding:4px 10px;border-radius:6px}
+.kp{width:100%;border-collapse:collapse;margin-bottom:6px}
+.kp th,.kp td{border-bottom:2px solid var(--blueBg);padding:8px 6px;text-align:left;vertical-align:middle}
+.kp th{font-size:16px;width:32%}
+.kp td{font-size:20px;font-weight:700;color:var(--blue)}
+.kp td.ex{font-size:17px;font-weight:500;color:var(--ink)}
+.kp td.ex b{color:var(--red)}
+@media(max-width:600px){.kp tr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);padding:6px 0;border-bottom:2px solid var(--blueBg)}
+.kp th,.kp td{border:0;padding:3px 4px;width:auto}.kp td.ex{grid-column:1/-1;padding-left:4px}}
+.stat{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.tile{border-radius:14px;padding:10px 8px;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:104px}
+.t-dday{background:#c8102e}.t-streak{background:#e8590c}.t-lv{background:#12358c}.t-today{background:#0b7a53}
+.tl{font-size:14px;font-weight:700}.tn{font-size:clamp(26px,6vw,36px);font-weight:900;line-height:1.1;font-family:"Noto Sans KR",sans-serif}
+.tn small{font-size:15px;font-weight:700;margin-left:2px}.ts{font-size:12px;font-weight:700;opacity:.95;margin-top:2px}
+.bar{width:100%;height:12px;border-radius:6px;background:rgba(255,255,255,.3);margin:8px 0 4px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:#ffd43b;border-radius:6px;transition:width .8s}
+.t-streak.hot .tn{animation:glow 1.6s infinite}@keyframes glow{50%{text-shadow:0 0 12px #ffd43b}}
+.statOpt{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start;justify-content:space-between;margin-top:6px}
+.statOpt summary{cursor:pointer;color:var(--blue);font-weight:700;font-size:15px;min-height:40px;display:flex;align-items:center}
+.statOpt>button{min-height:40px;font-size:14px;padding:4px 12px}
+.opts2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px}
+.heat{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;max-width:340px}
+.heat b{font-size:13px;text-align:center;color:var(--sub)}
+.heat i{aspect-ratio:1;border-radius:6px;background:var(--blueBg);border:1px solid var(--line);font-style:normal;font-size:12px;font-weight:700;display:grid;place-items:center;color:var(--sub)}
+.heat i.l1,.heat i.l2,.heat i.l3{color:#fff}.heat i.fut{background:none;border:1px dashed var(--line);opacity:.4}
+.heat i.l1{background:#8fb0ff}.heat i.l2{background:#3d6bdb}.heat i.l3{background:#12358c}
+.heat i.td{border:3px solid var(--ink);font-size:11px;color:var(--ink)}.heat i.td.l1,.heat i.td.l2,.heat i.td.l3{color:#fff}
+.legend{display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:13px;color:var(--sub);margin-top:6px}.legend i{display:inline-block;width:16px;height:16px;border-radius:4px;vertical-align:-3px;margin-right:3px;border:1px solid var(--line)}
+.badges{display:flex;flex-wrap:wrap;gap:8px}
+.bd{border-radius:12px;padding:6px 10px;font-weight:700;font-size:14px;border:2px solid var(--line);color:var(--sub);background:var(--bg);opacity:.55}
+.bd.on{opacity:1;background:#ffd43b;border-color:#b8860b;color:#111}
+.party{position:fixed;inset:0;display:grid;place-items:center;background:rgba(10,20,50,.45);z-index:50;overflow:hidden}
+.pbox{background:var(--bg);border:4px solid var(--blue);border-radius:20px;padding:22px 28px;text-align:center;animation:pop .45s cubic-bezier(.2,1.6,.4,1);max-width:88vw}
+@keyframes pop{0%{transform:scale(.4);opacity:0}100%{transform:scale(1);opacity:1}}
+.pk{font-size:40px;font-weight:900;color:var(--red);margin:0}
+.pxp{font-size:28px;font-weight:900;color:var(--blue);margin:4px 0 0}
+.pmsg{font-size:17px;font-weight:700;margin:8px 0 0;white-space:pre-line}
+.cf{position:absolute;top:-20px;width:10px;height:16px;border-radius:2px;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+@media (prefers-reduced-motion:reduce){.cf{display:none}.pbox{animation:none}.t-streak.hot .tn{animation:none}}
+
+.kana{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;margin-bottom:8px}
+.kana input{padding:10px 12px;font-size:17px}
+.kana button{min-height:46px;padding:6px 14px;background:var(--red);border-color:var(--red);color:#fff}
+.kanaRes{margin:0 0 10px;padding-bottom:10px;border-bottom:2px dashed var(--line)}
+.kanaRes .chip{border-color:var(--red)}.kanaRes .chip b{color:var(--red)}
+.setsum{cursor:pointer;font-weight:700;font-size:19px;color:var(--blue);min-height:48px;display:flex;align-items:center}
+.fallback{display:none;margin-top:12px}.fallback.on{display:block}
+a{color:var(--blue);font-weight:700}
+.spin{display:inline-block;animation:p 1s infinite}@keyframes p{50%{opacity:.35}}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}}
+</style>
+</head>
+<body>
+<header>
+<h1>韓国語 ひとこと添削</h1>
+<p>言いたいことを書く → 直してもらう → 先に読んで音で答え合わせ → 3回言う → ノートに残す</p>
+</header>
+<main class="wrap">
+<section class="stat" aria-label="がんばり状況">
+<div class="tile t-dday"><span class="tl" id="ddLabel">サイン会まで</span><span class="tn" id="ddNum">D-?</span></div>
+<div class="tile t-streak"><span class="tl">連続</span><span class="tn"><span id="stNum">0</span><small>日</small></span></div>
+</section>
+<div class="statOpt">
+<details><summary>目標の日を変える</summary>
+<div class="opts2"><input id="ddName" aria-label="目標の名前" placeholder="サイン会"><input id="ddDate" type="date" aria-label="目標の日"></div>
+<div class="row"><button id="ddSave">保存</button></div>
+</details>
+</div>
+
+<section class="card">
+<h2 class="step"><span class="num">1</span>今日言いたいことを書く</h2>
+<div class="pad">
+<div class="kana">
+<input id="kanaQ" enterkeyhint="search" autocomplete="off" aria-label="発音（かな）で韓国語を探す" placeholder="発音で探す（例：おぬるん）">
+<button id="kanaGo" type="button">探す</button>
+</div>
+<div class="chips kanaRes" id="kanaRes" hidden></div>
+<div class="tabs" role="tablist">
+<button class="tab on" data-g="p" role="tab">助詞</button><button class="tab" data-g="e" role="tab">文末</button><button class="tab" data-g="c" role="tab">つなぐ</button><button class="tab" data-g="w" role="tab">よく使う</button>
+</div>
+<div class="chips" id="chips"></div>
+<p class="exline" id="exline">タップすると、カーソルの位置に入ります。は・が・を などはパッチムを見て自動で形を選びます。</p>
+</div>
+<textarea id="say" class="ko" aria-label="韓国語で書く（日本語まじりでOK）" placeholder="저는 先生이에요. （日本語まじりでOK）"></textarea>
+<div class="opts">
+<label for="who">誰に言う？</label>
+<select id="who">
+<option value="友達・同年代（パンマル）">友達・同年代（パンマル）</option>
+<option value="初対面・年上（ていねい語 해요体）" selected>初対面・年上（ていねい語）</option>
+<option value="推し・アイドルへ（サイン会やファンレター。親しみつつ失礼にならない言い方）">推し・アイドルへ（サイン会・ファンレター）</option>
+<option value="SNSの投稿・日記（ひとりごと）">SNSの投稿・日記</option>
+</select>
+</div>
+<details class="more"><summary>言いたかった意味も書く（任意）</summary>
+<input id="want" aria-label="言いたかった意味" placeholder="今日、学校で生徒たちが一生懸命勉強した">
+</details>
+<button class="main" id="go">添削してもらう</button>
+<details class="kanpe">
+<summary>カンペを表で見る（例文つき）</summary>
+<p class="hint">語順は日本語と同じ。単語を置きかえて、助詞と文末をつけるだけ。知らない単語は日本語のままでOK。</p>
+<h3>助詞</h3>
+<p class="hint">「／」は、前の単語にパッチム<b>あり</b>／<b>なし</b>で使い分け。</p>
+<table class="kp">
+<tr><th>は</th><td class="ko">은／는</td><td class="ko ex">저<b>는</b> 선생님이에요</td></tr>
+<tr><th>が</th><td class="ko">이／가</td><td class="ko ex">날씨<b>가</b> 좋아요</td></tr>
+<tr><th>を</th><td class="ko">을／를</td><td class="ko ex">밥<b>을</b> 먹어요</td></tr>
+<tr><th>も</th><td class="ko">도</td><td class="ko ex">저<b>도</b> 좋아요</td></tr>
+<tr><th>に（場所・時間）</th><td class="ko">에</td><td class="ko ex">학교<b>에</b> 가요</td></tr>
+<tr><th>に（人）</th><td class="ko">에게・한테</td><td class="ko ex">친구<b>한테</b> 줬어요</td></tr>
+<tr><th>で（場所）</th><td class="ko">에서</td><td class="ko ex">도쿄<b>에서</b> 만나요</td></tr>
+<tr><th>で（手段）</th><td class="ko">으로／로</td><td class="ko ex">차<b>로</b> 가요</td></tr>
+<tr><th>と</th><td class="ko">하고</td><td class="ko ex">친구<b>하고</b> 갔어요</td></tr>
+<tr><th>から〜まで（時間）</th><td class="ko">부터〜까지</td><td class="ko ex">아홉 시<b>부터</b> 다섯 시<b>까지</b></td></tr>
+</table>
+<h3>文末の型（ていねい語）</h3>
+<table class="kp">
+<tr><th>〜です</th><td class="ko">이에요／예요</td><td class="ko ex">학생<b>이에요</b>・친구<b>예요</b></td></tr>
+<tr><th>〜ではないです</th><td class="ko">이／가 아니에요</td><td class="ko ex">학생이 <b>아니에요</b></td></tr>
+<tr><th>〜します</th><td class="ko">아요・어요・해요</td><td class="ko ex">가<b>요</b>・먹<b>어요</b>・공부<b>해요</b></td></tr>
+<tr><th>〜しました</th><td class="ko">았어요・었어요・했어요</td><td class="ko ex">갔<b>어요</b>・먹<b>었어요</b>・공부<b>했어요</b></td></tr>
+<tr><th>〜するつもりです</th><td class="ko">을 거예요／ㄹ 거예요</td><td class="ko ex">먹<b>을 거예요</b>・<b>갈 거예요</b></td></tr>
+<tr><th>〜したいです</th><td class="ko">고 싶어요</td><td class="ko ex">가<b>고 싶어요</b></td></tr>
+<tr><th>〜してください</th><td class="ko">아／어 주세요</td><td class="ko ex">봐 <b>주세요</b>・해 <b>주세요</b></td></tr>
+<tr><th>〜しません</th><td class="ko">안 ＋ 動詞</td><td class="ko ex"><b>안</b> 가요・공부 <b>안</b> 해요</td></tr>
+<tr><th>〜できます</th><td class="ko">을 수 있어요／ㄹ 수 있어요</td><td class="ko ex"><b>갈 수 있어요</b></td></tr>
+<tr><th>〜できません</th><td class="ko">못 ＋ 動詞</td><td class="ko ex"><b>못</b> 가요</td></tr>
+<tr><th>〜ですね（感想）</th><td class="ko">네요</td><td class="ko ex">예쁘<b>네요</b></td></tr>
+</table>
+<h3>文をつなぐ</h3>
+<table class="kp">
+<tr><th>〜して（並べる）</th><td class="ko">고</td><td class="ko ex">밥을 먹<b>고</b> 잤어요</td></tr>
+<tr><th>〜けど</th><td class="ko">지만</td><td class="ko ex">어렵<b>지만</b> 재미있어요</td></tr>
+<tr><th>〜から（理由）</th><td class="ko">아서・어서</td><td class="ko ex">좋<b>아서</b> 샀어요</td></tr>
+</table>
+<p class="hint"><b>パンマル（友達言葉）</b>は、文末の「요」を取るだけでだいたいOK（가요→가、먹어요→먹어）。「〜です」だけは 이에요→이야、예요→야。</p>
+</details>
+<p class="err" id="err" hidden></p>
+<div class="fallback" id="fb">
+<p class="hint">APIキーが未設定のときは、依頼文をコピーしてClaudeなどのチャットに貼り、返ってきた結果（{ から始まる文）を下に貼り付けてください。</p>
+<div class="row"><button id="copyPrompt">依頼文をコピー</button></div>
+<label for="pasteBack">返ってきた結果を貼り付け</label>
+<textarea id="pasteBack" placeholder='{"natural": ... }'></textarea>
+<div class="row"><button id="usePaste">この結果を表示</button></div>
+</div>
+</section>
+
+<section class="card">
+<details id="setBox">
+<summary class="setsum">設定（Gemini APIキー）</summary>
+<label for="apikey">Gemini APIキー</label>
+<input id="apikey" type="password" autocomplete="off" placeholder="AIza…">
+<label for="model">モデル名（ふつうは空欄でOK）</label>
+<input id="model" autocomplete="off" placeholder="gemini-flash-latest">
+<div class="row"><button id="saveKey">保存</button><button id="clearKey">キーを消す</button></div>
+<p class="hint" id="keyState"></p>
+<p class="sub">キーはこのiPhoneのブラウザの中だけに保存され、Googleへの添削リクエスト以外には送られません。キーは <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google AI Studio</a> で無料で作れます。無料枠では、送った文がGoogleのサービス改善に使われることがあるので、個人情報（実名・住所など）は書かないでください。</p>
+</details>
+</section>
+
+<section class="card" id="result" aria-live="polite">
+<h2 class="step"><span class="num">2</span>まず自分で読む</h2>
+<p class="hint">ルビなしで声に出して読んでから、ボタンで答え合わせ。</p>
+<p class="big ko" id="natural"></p>
+<p class="mean" id="meaning"></p>
+<div class="row">
+<button id="play">音声で答え合わせ</button>
+<button id="slow">ゆっくり聞く</button>
+</div>
+<div class="row"><button id="pronBtn">発音どおりの表記を見る</button></div>
+<div class="pron ko" id="pron"></div>
+<p class="sub" id="voiceNote"></p>
+
+<h2 class="step" style="margin-top:22px"><span class="num">3</span>直したところ</h2>
+<div class="praise" id="praise"></div>
+<div id="fixes"></div>
+<div id="wordsBox"><p class="sub">新しい単語</p><div class="words ko" id="words"></div></div>
+
+<h2 class="step" style="margin-top:22px"><span class="num">4</span>3回声に出す</h2>
+<div class="count" id="count"></div>
+<button class="main" id="save">ノートに残す</button>
+</section>
+
+<section class="card">
+<h2 class="step"><span class="num">5</span>言えるようになったことノート</h2>
+<p class="hint">見返さなくてOK。たまったら眺めると、増えているのがわかります。</p>
+<p class="sub">この5週間（書いた日に色がつきます）</p>
+<div class="heat" id="heat"></div>
+<div class="legend"><span><i style="background:var(--blueBg)"></i>0文</span><span><i style="background:#8fb0ff"></i>1文</span><span><i style="background:#3d6bdb"></i>2文</span><span><i style="background:#12358c"></i>3文以上</span><span><i style="border:3px solid var(--ink)"></i>今日</span></div>
+<p class="sub">ノート（<span id="ntCount">0</span>文）</p>
+<ul class="note" id="note"></ul>
+<div class="row"><button id="copyAll">ノートを全部コピー</button></div>
+<p class="sub">ノートはこの端末のブラウザに保存されます。消えることもあるので、ときどき「全部コピー」でメモアプリに貼っておくと安心です。</p>
+</section>
+</main>
+<div class="party" id="party" aria-live="assertive" hidden>
+<div class="pbox"><p class="pk ko" id="pK">잘했어요!</p><p class="pmsg" id="pMsg"></p></div>
+</div>
+
+<script>
+{
+const $=id=>document.getElementById(id);
+let cur=null,said=0;
+const KEY="ko-tensaku-note";
+const load=()=>{try{return JSON.parse(localStorage.getItem(KEY)||"[]")}catch(e){return[]}};
+const store=a=>{try{localStorage.setItem(KEY,JSON.stringify(a))}catch(e){}};
+
+function el(tag,cls,text){const e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e}
+
+function buildPrompt(){
+return `あなたは日本人学習者の韓国語作文を添削する先生です。
+学習者の文: ${$("say").value.trim()}
+言いたかった意味（日本語、空なら推測）: ${$("want").value.trim()||"（なし）"}
+話す相手・場面: ${$("who").value}
+
+次のJSONだけを返してください（説明文やコードブロックは不要）。説明はすべてやさしい日本語で短く。
+{
+ "natural": "相手・場面に合った、韓国人が実際に言う自然な韓国語（1〜3文）",
+ "meaning": "naturalの日本語訳",
+ "pron": "naturalを実際の発音どおりにハングルで書いたもの（連音化・鼻音化・濃音化などを反映。カタカナは使わない）",
+ "pronRule": "pronで起きている主な発音変化を1〜2個、日本語で一言ずつ（例: 음악→[으막] 連音化）。なければ空文字",
+ "praise": "学習者の文でできていた点を1文で",
+ "fixes": [{"from":"学習者の書いた部分","to":"直した形","why":"理由を日本語で1文"}],
+ "words": [{"ko":"学習者にとって新しそうな単語","ja":"意味"}]
+}
+fixesは大事なものから最大4つ。学習者が日本語だけで書いた場合はfixesを空にし、praiseは励ましの一言に。wordsは最大5つ。`}
+
+async function correct(){
+const t=$("say").value.trim(), w=$("want").value.trim();
+$("err").hidden=true;
+if(!t&&!w){showErr("言いたいことを書いてください。");return}
+const key=getKey();
+if(!key){$("fb").classList.add("on");showErr("APIキーが未設定です。下の「設定」でキーを入れるか、依頼文のコピーで続けてください。");return}
+const b=$("go");b.disabled=true;b.innerHTML='<span class="spin">添削中…</span>';
+try{take(await gemini(key,buildPrompt()),t||w)}
+catch(e){showErr(errMsg(e))}
+finally{b.disabled=false;b.textContent="添削してもらう"}
+}
+function errMsg(e){const s=e&&e.status;
+if(s===400||s===401||s===403)return"APIキーが正しくないようです。設定を確認してください。";
+if(s===429)return"無料枠の回数制限です。1分ほど待つか、明日またどうぞ。";
+if(s===404)return"モデル名が見つかりません。設定のモデル名を空欄にして保存してください。";
+if(e&&e.message)return"結果を読み取れませんでした。もう一度押してください。";
+return"うまくいきませんでした。通信状況を確認して、もう一度押してください。"}
+function take(r,said){
+if(!r||!r.natural)throw{message:"bad"};
+cur={said,natural:String(r.natural),meaning:String(r.meaning||""),pron:String(r.pron||""),pronRule:String(r.pronRule||""),
+praise:String(r.praise||""),fixes:Array.isArray(r.fixes)?r.fixes:[],words:Array.isArray(r.words)?r.words:[]};
+show();
+}
+function parseJSON(s){s=String(s||"");const a=s.indexOf("{"),z=s.lastIndexOf("}");return JSON.parse(s.slice(a,z+1))}
+const KK="ko-tensaku-key",MK="ko-tensaku-model";
+const getKey=()=>{try{return localStorage.getItem(KK)||""}catch(e){return""}};
+const getModel=()=>{try{return localStorage.getItem(MK)||""}catch(e){return""}};
+async function callModel(key,model,prompt){
+const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,{
+method:"POST",headers:{"Content-Type":"application/json","x-goog-api-key":key},
+body:JSON.stringify({contents:[{role:"user",parts:[{text:prompt}]}],generationConfig:{responseMimeType:"application/json",temperature:0.4}})});
+if(!res.ok)throw{status:res.status};
+const j=await res.json();
+const txt=((j.candidates&&j.candidates[0]&&j.candidates[0].content&&j.candidates[0].content.parts)||[]).map(p=>p.text||"").join("");
+return parseJSON(txt);
+}
+async function gemini(key,prompt){
+const own=getModel();const list=own?[own]:["gemini-flash-latest","gemini-2.5-flash"];let last;
+for(const m of list){try{return await callModel(key,m,prompt)}catch(e){last=e;if(!e||e.status!==404)throw e}}
+throw last;
+}
+function keyState(){const k=getKey();$("keyState").textContent=k?"キー設定済み（…"+k.slice(-4)+"）":"キーはまだ設定されていません。";$("model").value=getModel()}
+function showErr(m){$("err").textContent=m;$("err").hidden=false}
+
+function show(){
+$("natural").textContent=cur.natural;
+$("meaning").textContent=cur.meaning;
+const p=$("pron");p.textContent="["+cur.pron+"]";p.classList.remove("on");
+if(cur.pronRule){p.appendChild(el("small",null,cur.pronRule))}
+$("pronBtn").textContent="発音どおりの表記を見る";
+$("praise").textContent=cur.praise||"よく書けました。";
+const f=$("fixes");f.textContent="";
+cur.fixes.slice(0,4).forEach(x=>{const d=el("div","fix");
+const l=el("div","ko");l.appendChild(el("span","from",String(x.from||"")));l.appendChild(document.createTextNode("  →  "));l.appendChild(el("span","to",String(x.to||"")));
+d.appendChild(l);d.appendChild(el("p",null,String(x.why||"")));f.appendChild(d)});
+if(!cur.fixes.length)f.appendChild(el("p","sub","直すところはありませんでした。"));
+const ws=$("words");ws.textContent="";
+cur.words.slice(0,5).forEach(x=>ws.appendChild(el("span",null,`${x.ko||""}  ${x.ja||""}`)));
+$("wordsBox").hidden=!cur.words.length;
+said=0;drawCount();
+$("save").disabled=false;$("save").textContent="ノートに残す";
+$("result").classList.add("on");
+$("result").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion:reduce)").matches?"auto":"smooth",block:"start"});
+}
+
+function drawCount(){const c=$("count");c.textContent="";
+for(let i=0;i<3;i++){const d=el("button","dot"+(i<said?" on":""),String(i+1));d.setAttribute("aria-label",`${i+1}回目を言った`);
+d.onclick=()=>{said=i<said?i:i+1;drawCount()};c.appendChild(d)}}
+
+function koVoice(){try{return speechSynthesis.getVoices().find(v=>/^ko/i.test(v.lang))}catch(e){return null}}
+try{speechSynthesis.onvoiceschanged=()=>{}}catch(e){}
+async function speak(text,slow){
+const note=$("voiceNote");note.textContent="";
+const v=koVoice();
+if(v){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.voice=v;u.lang=v.lang;u.rate=slow?0.6:0.95;speechSynthesis.speak(u);return}catch(e){}}
+note.textContent="韓国語の音声が見つかりません（設定→アクセシビリティ→読み上げコンテンツ→声 で韓国語を追加できます）。";
+const a=el("a",null,"Papagoで聞く");a.href="https://papago.naver.com/?sk=ko&tk=ja&st="+encodeURIComponent(text);a.target="_blank";a.rel="noopener";
+note.appendChild(document.createTextNode(" "));note.appendChild(a);
+}
+
+function renderNote(){const n=$("note"),a=load();n.textContent="";
+if(!a.length){n.appendChild(el("li","empty","まだありません。最初のひとことを書いてみましょう。"));return}
+a.slice().reverse().forEach(x=>{const li=el("li");li.appendChild(el("span","k ko",x.natural));li.appendChild(el("span","j",x.meaning));
+li.appendChild(el("span","d",x.date));const b=el("button",null,"聞く");b.onclick=()=>speak(x.natural,false);li.appendChild(b);n.appendChild(li)})}
+
+async function copy(text,btn,label){try{await navigator.clipboard.writeText(text);btn.textContent="コピーしました"}catch(e){btn.textContent="コピーできませんでした"}
+setTimeout(()=>btn.textContent=label,1800)}
+
+$("go").onclick=correct;
+$("play").onclick=()=>cur&&speak(cur.natural,false);
+$("slow").onclick=()=>cur&&speak(cur.natural,true);
+$("pronBtn").onclick=()=>{const on=$("pron").classList.toggle("on");$("pronBtn").textContent=on?"発音表記をかくす":"発音どおりの表記を見る"};
+/* やる気のしかけ */
+const LS=(k,v)=>{try{if(v===undefined)return JSON.parse(localStorage.getItem(k));localStorage.setItem(k,JSON.stringify(v))}catch(e){return null}};
+const dk=d=>`${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()}`;
+function counts(){const a=load(),m={};a.forEach(x=>{m[x.date]=(m[x.date]||0)+1});return m}
+function stats(){const m=counts(),t=new Date();let s=0,d=new Date(t);
+if(!m[dk(d)])d.setDate(d.getDate()-1);
+while(m[dk(d)]){s++;d.setDate(d.getDate()-1)}
+return{m,streak:s,doneToday:!!m[dk(t)],today:m[dk(t)]||0,total:load().length}}
+function ddInfo(){const o=LS("kt-dday")||{name:"サイン会",date:"2027-01-16"};return o}
+function renderStat(){const s=stats();
+const o=ddInfo();$("ddLabel").textContent=(o.name||"目標")+"まで";
+const t=new Date();t.setHours(0,0,0,0);const g=new Date(o.date+"T00:00:00");const diff=Math.round((g-t)/864e5);
+$("ddNum").textContent=isNaN(diff)?"D-?":diff>0?`D-${diff}`:diff===0?"D-DAY":`D+${-diff}`;
+$("stNum").textContent=s.streak;
+document.querySelector(".t-streak").classList.toggle("hot",s.streak>=3);
+const h=$("heat");h.textContent="";
+["月","火","水","木","金","土","日"].forEach(w=>h.appendChild(el("b",null,w)));
+const td=new Date();td.setHours(0,0,0,0);const st=new Date(td);st.setDate(td.getDate()-((td.getDay()+6)%7)-28);
+for(let i=0;i<35;i++){const d=new Date(st);d.setDate(st.getDate()+i);
+if(d>td){h.appendChild(el("i","fut"));continue}
+const c=s.m[dk(d)]||0;const e=el("i",c?"l"+Math.min(c,3):"");
+if(+d===+td){e.classList.add("td");e.textContent="今日"}else e.textContent=d.getDate();
+e.title=`${dk(d)}：${c}文`;h.appendChild(e)}
+$("ntCount").textContent=s.total;
+const dn=$("ddName"),dd=$("ddDate");if(document.activeElement!==dn)dn.value=o.name||"";if(document.activeElement!==dd)dd.value=o.date||""}
+
+const PRAISE=["잘했어요!","최고예요!","대박!","멋져요!","완벽해요!","좋아요!","천재인가요?"];
+function party(msg,big){const p=$("party");p.querySelectorAll(".cf").forEach(x=>x.remove());
+$("pK").textContent=PRAISE[Math.floor(Math.random()*PRAISE.length)];$("pMsg").textContent=msg;
+const cols=["#c8102e","#12358c","#ffd43b","#0b7a53","#e8590c","#ffffff"];
+for(let i=0;i<(big?70:36);i++){const c=el("i","cf");c.style.left=Math.random()*100+"%";c.style.background=cols[i%cols.length];
+c.style.animationDuration=(1.4+Math.random()*1.4)+"s";c.style.animationDelay=(Math.random()*.4)+"s";p.appendChild(c)}
+p.hidden=false;clearTimeout(party.t);party.t=setTimeout(()=>p.hidden=true,big?3200:2200)}
+$("party").onclick=()=>$("party").hidden=true;
+
+$("save").onclick=()=>{if(!cur)return;
+const before=stats();
+const a=load();a.push({natural:cur.natural,meaning:cur.meaning,said:cur.said,date:dk(new Date())});store(a);
+const s=stats();const grew=s.streak>before.streak;
+const msg=`ノートに残しました（${s.total}文目）`+(s.streak>1?`
+${s.streak}日連続！`:"");
+renderNote();renderStat();party(msg,grew&&[3,7,14,30,50,100].includes(s.streak));
+$("save").disabled=true;$("save").textContent="ノートに残しました";$("say").value="";$("want").value=""};
+$("ddSave").onclick=()=>{LS("kt-dday",{name:$("ddName").value.trim()||"目標",date:$("ddDate").value});renderStat()};
+$("copyAll").onclick=e=>copy(load().map(x=>`${x.date}\n${x.natural}\n${x.meaning}`).join("\n\n")||"（まだありません）",e.currentTarget,"ノートを全部コピー");
+$("copyPrompt").onclick=e=>copy(buildPrompt(),e.currentTarget,"依頼文をコピー");
+
+/* 入力パッド */
+const ta=$("say");
+function prevChar(){const s=ta.value.slice(0,ta.selectionStart).replace(/\s+$/,"");return s.slice(-1)}
+function bat(){const c=prevChar().charCodeAt(0);if(c>=0xAC00&&c<=0xD7A3)return (c-0xAC00)%28;return -1}
+const pick=(a,b)=>()=>{const k=bat();return k<0?`${a}/${b}`:(k?a:b)};
+const pickRo=()=>{const k=bat();return k<0?"으로/로":(k===0||k===8?"로":"으로")};
+const G={
+p:[["は",pick("은","는"),"저는 선생님이에요"],["が",pick("이","가"),"날씨가 좋아요"],["を",pick("을","를"),"밥을 먹어요"],["も","도","저도 좋아요"],
+["に（場所・時間）","에","학교에 가요"],["に（人）","한테","친구한테 줬어요"],["で（場所）","에서","도쿄에서 만나요"],["で（手段）",pickRo,"차로 가요"],
+["と","하고","친구하고 갔어요"],["の","의","IVE의 노래"],["から（時間）","부터","아홉 시부터"],["まで","까지","다섯 시까지"]],
+e:[["です",pick("이에요","예요"),"학생이에요・친구예요"],["ではないです",()=>pick("이","가")()+" 아니에요","학생이 아니에요"],
+["します（〇〇する）","해요","공부해요"],["しました（〇〇する）","했어요","공부했어요"],["するつもり（〇〇する）","할 거예요","공부할 거예요"],
+["したいです","고 싶어요","가고 싶어요・공부하고 싶어요"],["してください（〇〇する）","해 주세요","사인해 주세요"],
+["しない（動詞の前）","안 ","안 가요・공부 안 해요"],["できない（動詞の前）","못 ","못 가요"],["できます（〇〇する）","할 수 있어요","공부할 수 있어요"],
+["ですね（感想）","네요","예쁘네요"]],
+c:[["〜して（並べる）","고 ","밥을 먹고 잤어요"],["〜けど","지만 ","어렵지만 재미있어요"],["〜から（〇〇する）","해서 ","공부해서 피곤해요"],
+["そして","그리고 ","그리고 집에 갔어요"],["でも","그런데 ","그런데 비가 왔어요"],["だから","그래서 ","그래서 행복해요"]],
+w:[["私は","저는 ","저는 일본 사람이에요"],["今日","오늘 ","오늘 학교에 갔어요"],["本当に","정말 ","정말 좋아요"],["とても","너무 ","너무 예뻐요"],
+["いつも","항상 ","항상 응원해요"],["好きです","좋아해요","IVE를 좋아해요"],["応援してます","응원해요","항상 응원해요"],["ありがとう","고마워요","정말 고마워요"],
+["会いたかった","보고 싶었어요","정말 보고 싶었어요"],["また会いましょう","또 만나요","다음에 또 만나요"]]};
+let g="p";
+function drawChips(){const c=$("chips");c.textContent="";
+G[g].forEach(([ja,ins,ex])=>{const b=el("button","chip");b.type="button";b.appendChild(el("span",null,ja));
+const k=el("b",null,typeof ins==="function"?ins().replace(/^$/,""):ins.trim());b.appendChild(k);
+b.addEventListener("pointerdown",e=>e.preventDefault());
+b.onclick=()=>{const t=typeof ins==="function"?ins():ins;const s=ta.selectionStart,en=ta.selectionEnd;ta.setRangeText(t,s,en,"end");ta.focus();
+const x=$("exline");x.textContent="例：";x.appendChild(el("span","ko",ex));drawChips()};
+c.appendChild(b)})}
+document.querySelectorAll(".tab").forEach(t=>{t.addEventListener("pointerdown",e=>e.preventDefault());
+t.onclick=()=>{g=t.dataset.g;document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on",x===t));drawChips()}});
+["input","click","keyup"].forEach(ev=>ta.addEventListener(ev,()=>{if(g==="p"||g==="e")drawChips()}));
+drawChips();
+
+/* 発音（かな）で探す */
+async function kanaSearch(){
+const q=$("kanaQ").value.trim(),box=$("kanaRes"),x=$("exline");
+if(!q)return;
+const key=getKey();if(!key){x.textContent="この機能はAPIキーが必要です（下の「設定」）。";return}
+const b=$("kanaGo");b.disabled=true;b.textContent="…";
+box.hidden=false;box.textContent="";box.appendChild(el("span","exline","探しています…"));
+const prompt=`日本人の韓国語学習者が、聞こえた韓国語の発音をかな（またはローマ字）で書きました: 「${q}」
+学習者がいま書いている文（文脈。空でもよい）: 「${ta.value.trim()}」
+この発音に当てはまりそうな韓国語を、可能性の高い順に最大5つ挙げてください。連音化・鼻音化・濃音化などの発音変化や、助詞・語尾がくっついた形も考えに入れること。
+次のJSONだけを返してください: {"cands":[{"ko":"오늘은","ja":"今日は","note":"오늘（今日）＋은（は）。パッチムㄹが次につながって「おぬるん」"}]}
+jaとnoteはやさしい日本語で短く。`;
+try{
+const r=await gemini(key,prompt);
+const c=Array.isArray(r&&r.cands)?r.cands.slice(0,5):[];
+box.textContent="";
+if(!c.length)box.appendChild(el("span","exline","見つかりませんでした。書き方を変えてみてください。"));
+c.forEach(o=>{const ko=String(o.ko||""),ja=String(o.ja||""),note=String(o.note||"");
+const ch=el("button","chip");ch.type="button";ch.appendChild(el("b",null,ko));ch.appendChild(el("span",null,ja));
+ch.addEventListener("pointerdown",e=>e.preventDefault());
+ch.onclick=()=>{const s=ta.selectionStart,en=ta.selectionEnd;ta.setRangeText(ko,s,en,"end");ta.focus();
+x.textContent="";x.appendChild(el("span","ko",ko));x.appendChild(document.createTextNode("　"+note));
+$("kanaQ").value="";box.hidden=true;drawChips()};
+box.appendChild(ch)});
+if(c.length)x.textContent="タップすると入力欄に入ります。";
+}catch(e){box.textContent="";
+box.appendChild(el("span","exline",errMsg(e)))}
+finally{b.disabled=false;b.textContent="探す"}
+}
+$("kanaGo").onclick=kanaSearch;
+$("kanaQ").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.isComposing){e.preventDefault();kanaSearch()}});
+
+renderNote();renderStat();
+$("usePaste").onclick=()=>{$("err").hidden=true;try{take(parseJSON($("pasteBack").value),$("say").value.trim()||$("want").value.trim());$("pasteBack").value="";$("fb").classList.remove("on")}catch(e){showErr("結果を読み取れませんでした。{ から } までをまるごと貼ってください。")}};
+$("saveKey").onclick=()=>{try{const k=$("apikey").value.trim();if(k)localStorage.setItem(KK,k);const m=$("model").value.trim();m?localStorage.setItem(MK,m):localStorage.removeItem(MK)}catch(e){}$("apikey").value="";keyState();$("fb").classList.remove("on");$("err").hidden=true};
+$("clearKey").onclick=()=>{try{localStorage.removeItem(KK)}catch(e){}keyState()};
+keyState();if(!getKey())$("setBox").open=true;
+try{speechSynthesis.getVoices()}catch(e){}
+}
+</script>
+</body>
+</html>
